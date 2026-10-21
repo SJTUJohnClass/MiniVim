@@ -37,9 +37,11 @@ private:
     std::optional<char> TryReadByte(); //等待一次读取超时后可返回nullopt,不是立即返回的非阻塞读取
     ScreenSize QueryCursorPosition(); //查询终端光标坐标,供获取屏幕大小的备用路径使用
 
+    std::optional<char> unread_;
     termios original_{}; //进入raw模式前的终端设置,用于恢复
 };
 
 } // namespace sjtu
 
 #endif // MINIVIM_TERMINAL_HPP
+
