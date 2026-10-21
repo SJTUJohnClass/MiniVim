@@ -79,6 +79,10 @@ KeyEvent Terminal::ReadKey() {
     if (!second.has_value()) {
         return {KeyCode::Escape, 0};
     }
+    if (*second != '[' && *second != 'O') {
+        unread_ = *second;
+        return {KeyCode::Escape, 0};
+    }
     auto third = TryReadByte();
     if (!third.has_value()) {
         return {KeyCode::Escape, 0};
@@ -170,6 +174,7 @@ void Terminal::ClearScreen() {
 }
 
 char Terminal::ReadByte() {
+    if (unread_) { char value = *unread_; unread_.reset(); return value; }
     //循环读取一个字节,超时或暂时不可读时继续等,被信号中断时重试
     //其他读取错误抛出异常;这个接口用于等待用户按下一个新键
     while (true) {
@@ -232,3 +237,4 @@ ScreenSize Terminal::QueryCursorPosition() {
 }
 
 } // namespace sjtu
+
